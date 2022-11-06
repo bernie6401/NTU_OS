@@ -64,23 +64,41 @@ Alarm::Alarm(bool doRandom)
 /* ********************************************* 
     Self-defined
 ********************************************* */
-void Alarm::CallBack() {
+void Alarm::CallBack()
+{
     Interrupt *interrupt = kernel->interrupt;
     MachineStatus status = interrupt->getStatus();
     bool woken = _sleepList.PutToReady();
+
     //如果沒有程式需要計數了，就把時脈中斷遮蔽掉
-    if (status == IdleMode && !woken && _sleepList.IsEmpty()) {// is it time to quit?
-        if (!interrupt->AnyFutureInterrupts()) {
+    if (status == IdleMode && !woken && _sleepList.IsEmpty())
+    {   // is it time to quit?
+        if (!interrupt->AnyFutureInterrupts())
             timer->Disable();   // turn off the timer
+    }
+    else    // there's someone to preempt
+    {
+        /*-----------------------Homework for CPU Scheduling------------------------*/
+        if(kernel->scheduler->getSchedulerType() == RR || kernel->scheduler->getSchedulerType() == Priority )
+        {
+            cout << "=== interrupt->YieldOnReturn ===" << endl;
+            interrupt->YieldOnReturn();
         }
-    } else {                    // there's someone to preempt
-        interrupt->YieldOnReturn();
+        /*-----------------------Homework for CPU Scheduling------------------------*/
     }
 }
 void Alarm::WaitUntil(int x) {
     //關中斷
     IntStatus oldLevel = kernel->interrupt->SetLevel(IntOff);
     Thread* t = kernel->currentThread;
+
+    /*-----------------------Homework for CPU Scheduling------------------------*/
+    int worktime = kernel->stats->userTicks - t->getStartTime();
+    t->setBurstTime(t->getBurstTime() + worktime);
+    t->setStartTime(kernel->stats->userTicks);
+    /*-----------------------Homework for CPU Scheduling------------------------*/
+
+    
     cout << "Alarm::WaitUntil go sleep" << endl;
     _sleepList.PutToSleep(t, x);
     //開中斷
