@@ -77,15 +77,25 @@ main(int argc, char **argv)
 
 
     /*-----------------------Homework------------------------*/
+    // SchedulerType type = RR;
+    // if(strcmp(argv[1], "FCFS") == 0)
+    //     type = FIFO;
+    // else if (strcmp(argv[1], "SJF") == 0)
+    //     type = SJF;
+    // else if (strcmp(argv[1], "PRIORITY") == 0)
+    //     type = Priority;
+    // else if (strcmp(argv[1], "RR") == 0)
+    //     type = RR;
     SchedulerType type = RR;
-    if(strcmp(argv[1], "FCFS") == 0)
-        type = FIFO;
-    else if (strcmp(argv[1], "SJF") == 0)
-        type = SJF;
-    else if (strcmp(argv[1], "PRIORITY") == 0)
-        type = Priority;
-    else if (strcmp(argv[1], "RR") == 0)
-        type = RR;
+    if(strcmp(argv[1], "FCFS") == 0) {
+    type = FIFO;
+    } else if (strcmp(argv[1], "SJF") == 0) {
+    type = SJF;
+    } else if (strcmp(argv[1], "PRIORITY") == 0) {
+    type = Priority;
+    } else if (strcmp(argv[1], "RR") == 0) {
+    type = RR;
+    }
     /*-----------------------Homework------------------------*/
     
 
