@@ -75,6 +75,20 @@ main(int argc, char **argv)
     
     DEBUG(dbgThread, "Entering main");
 
+
+    /*-----------------------Homework------------------------*/
+    SchedulerType type = RR;
+    if(strcmp(argv[1], "FCFS") == 0)
+        type = FIFO;
+    else if (strcmp(argv[1], "SJF") == 0)
+        type = SJF;
+    else if (strcmp(argv[1], "PRIORITY") == 0)
+        type = Priority;
+    else if (strcmp(argv[1], "RR") == 0)
+        type = RR;
+    /*-----------------------Homework------------------------*/
+    
+
     kernel = new KernelType(argc, argv);
     kernel->Initialize();
     
