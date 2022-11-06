@@ -110,10 +110,50 @@ We'd like to add sleep() function in system call
        kernel->alarm->WaitUntil(val);
        return;
    ```
-   
-   
 
+6. 
 
+7. Refer to [OS-NachOS-HW1](http://blog.terrynini.tw/tw/OS-NachOS-HW1/#測試-1), you can write your own testing case or just use the ready-made test case on the web. Note that you must revise `Makefile` in `code/test/Makefile` like this...
+
+   ```makefile
+   
+   all: halt shell matmult sort test1 test2 sleep1 sleep2
+   ...
+   sleep1: sleep1.o start.o
+   	$(LD) $(LDFLAGS) start.o sleep1.o -o sleep1.coff
+   	../bin/coff2noff sleep1.coff sleep1
+   
+   sleep2: sleep2.o start.o
+   	$(LD) $(LDFLAGS) start.o sleep2.o -o sleep2.coff
+   	../bin/coff2noff sleep2.coff sleep2
+   ```
+
+   *Note that you must use **tab** in `Makefile`.
+
+   *The purpose of these manipulation is when you use `make` command in `code/Makefile`. It'll execute all `Makefile` that exist in each folder. It can be observed in `code/Makefile`
+
+   ```makefile
+   MAKE = make
+   LPR = lpr
+   
+   all: 
+   	cd threads; $(MAKE) depend
+   	cd threads; $(MAKE) nachos
+   	cd userprog; $(MAKE) depend 
+   	cd userprog; $(MAKE) nachos 
+   	cd filesys; $(MAKE) depend
+   	cd filesys; $(MAKE) nachos 
+   	cd network; $(MAKE) depend
+   	cd network; $(MAKE) nachos 
+   	cd bin; $(MAKE) all
+   	cd test; make all
+   ```
+
+   
 
 
 ## Implement CPU Scheduling
+
+## Reference
+
+* [OS-NachOS-HW1](http://blog.terrynini.tw/tw/OS-NachOS-HW1/)
