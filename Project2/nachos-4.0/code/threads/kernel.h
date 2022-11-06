@@ -24,8 +24,11 @@ class ThreadedKernel {
     ~ThreadedKernel();		// deallocate the kernel
     
     void Initialize(); 		// initialize the kernel -- separated
-				// from constructor because 
-				// refers to "kernel" as a global
+                          // from constructor because 
+                          // refers to "kernel" as a global
+    /*-----------------------Homework for CPU Scheduling------------------------*/
+    void Initialize(SchedulerType);
+    /*-----------------------Homework for CPU Scheduling------------------------*/
 
     void Run();			// do kernel stuff
 				    
