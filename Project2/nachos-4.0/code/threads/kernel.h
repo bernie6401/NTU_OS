@@ -27,7 +27,7 @@ class ThreadedKernel {
                           // from constructor because 
                           // refers to "kernel" as a global
     /*-----------------------Homework for CPU Scheduling------------------------*/
-    void Initialize(SchedulerType);
+    void Initialize(SchedulerType type);
     /*-----------------------Homework for CPU Scheduling------------------------*/
 
     void Run();			// do kernel stuff
