@@ -101,7 +101,8 @@ ThreadedKernel::Run()
 //      Test whether this module is working.
 //----------------------------------------------------------------------
 
-void ThreadedKernel::SelfTest() {
+void ThreadedKernel::SelfTest()
+{
    Semaphore *semaphore;
    SynchList<int> *synchList;
    

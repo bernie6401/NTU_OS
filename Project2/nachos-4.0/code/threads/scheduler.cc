@@ -23,7 +23,7 @@
 #include "scheduler.h"
 #include "main.h"
 
-
+/*-----------------------Homework------------------------*/
 int SJFCompare(Thread *a, Thread *b)
 {
     if(a->getBurstTime() == b->getBurstTime())
@@ -69,6 +69,7 @@ Scheduler::Scheduler(SchedulerType type)
     }
 	toBeDestroyed = NULL;
 } 
+/*-----------------------Homework------------------------*/
 
 //----------------------------------------------------------------------
 // Scheduler::~Scheduler

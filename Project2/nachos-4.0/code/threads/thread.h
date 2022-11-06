@@ -76,7 +76,8 @@ enum ThreadStatus { JUST_CREATED, RUNNING, READY, BLOCKED };
 //  Some threads also belong to a user address space; threads
 //  that only run in the kernel have a NULL address space.
 
-class Thread {
+class Thread
+{
   private:
     // NOTE: DO NOT CHANGE the order of these first two members.
     // THEY MUST be in this position for SWITCH to work.

@@ -90,7 +90,7 @@ main(int argc, char **argv)
     
 
     kernel = new KernelType(argc, argv);
-    kernel->Initialize();
+    kernel->Initialize(type);
     
     CallOnUserAbort(Cleanup);		// if user hits ctl-C
 

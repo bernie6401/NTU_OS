@@ -70,6 +70,7 @@ void Alarm::CallBack()
     MachineStatus status = interrupt->getStatus();
     bool woken = _sleepList.PutToReady();
 
+    kernel->currentThread->setPriority(kernel->currentThread->getPriority() - 1);   // For CPU schduling
     //如果沒有程式需要計數了，就把時脈中斷遮蔽掉
     if (status == IdleMode && !woken && _sleepList.IsEmpty())
     {   // is it time to quit?
@@ -87,7 +88,8 @@ void Alarm::CallBack()
         /*-----------------------Homework for CPU Scheduling------------------------*/
     }
 }
-void Alarm::WaitUntil(int x) {
+void Alarm::WaitUntil(int x)
+{
     //關中斷
     IntStatus oldLevel = kernel->interrupt->SetLevel(IntOff);
     Thread* t = kernel->currentThread;
@@ -98,7 +100,7 @@ void Alarm::WaitUntil(int x) {
     t->setStartTime(kernel->stats->userTicks);
     /*-----------------------Homework for CPU Scheduling------------------------*/
 
-    
+
     cout << "Alarm::WaitUntil go sleep" << endl;
     _sleepList.PutToSleep(t, x);
     //開中斷
