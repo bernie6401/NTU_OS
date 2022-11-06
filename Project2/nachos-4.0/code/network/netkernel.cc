@@ -48,14 +48,19 @@ NetKernel::NetKernel(int argc, char **argv) : UserProgKernel(argc, argv)
 // 	Initialize Nachos global data structures.
 //----------------------------------------------------------------------
 
-void
-NetKernel::Initialize()
+/*-----------------------Homework for CPU Scheduling------------------------*/
+void NetKernel::Initialize()
 {
-    UserProgKernel::Initialize();	// init other kernel data structs
-
+    Initialize(RR);
+}
+void NetKernel::Initialize(SchedulerType type)
+{
+    UserProgKernel::Initialize(type);	// init other kernel data structs
     postOfficeIn = new PostOfficeInput(10);
     postOfficeOut = new PostOfficeOutput(reliability, 10);
 }
+/*-----------------------Homework for CPU Scheduling------------------------*/
+
 
 //----------------------------------------------------------------------
 // NetKernel::~NetKernel

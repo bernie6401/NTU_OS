@@ -16,6 +16,13 @@
 #include "filesys.h"
 #include "machine.h"
 #include "synchdisk.h"
+
+
+/*-----------------------Homework for CPU Scheduling------------------------*/
+#include "../threads/scheduler.h"
+/*-----------------------Homework for CPU Scheduling------------------------*/
+
+
 class SynchDisk;
 class UserProgKernel : public ThreadedKernel {
   public:
@@ -23,7 +30,11 @@ class UserProgKernel : public ThreadedKernel {
 				// Interpret command line arguments
     ~UserProgKernel();		// deallocate the kernel
 
-    void Initialize();		// initialize the kernel 
+    void Initialize();		// initialize the kernel
+    
+    /*-----------------------Homework for CPU Scheduling------------------------*/
+    void Initialize(SchedulerType type);
+    /*-----------------------Homework for CPU Scheduling------------------------*/
 
     void Run();			// do kernel stuff 
 

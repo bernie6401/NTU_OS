@@ -13,6 +13,9 @@
 #define NETKERNEL_H
 
 #include "userkernel.h"
+/*-----------------------Homework for CPU Scheduling------------------------*/
+#include "../threads/scheduler.h"
+/*-----------------------Homework for CPU Scheduling------------------------*/
 
 class PostOfficeInput;
 class PostOfficeOutput;
@@ -23,7 +26,11 @@ class NetKernel : public UserProgKernel {
 				// Interpret command line arguments
     ~NetKernel();		// deallocate the kernel
 
-    void Initialize();		// initialize the kernel 
+    void Initialize();		// initialize the kernel
+    
+    /*-----------------------Homework for CPU Scheduling------------------------*/
+    void Initialize(SchedulerType);
+    /*-----------------------Homework for CPU Scheduling------------------------*/
 
     void Run();			// do kernel stuff 
 

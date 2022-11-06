@@ -51,18 +51,21 @@ UserProgKernel::UserProgKernel(int argc, char **argv): ThreadedKernel(argc, argv
 // UserProgKernel::Initialize
 // 	Initialize Nachos global data structures.
 //----------------------------------------------------------------------
-
+/*-----------------------Homework for CPU Scheduling------------------------*/
 void UserProgKernel::Initialize()
 {
-    ThreadedKernel::Initialize();	// init multithreading
-
+	Initialize(RR);
+}
+void UserProgKernel::Initialize(SchedulerType type)
+{
+    ThreadedKernel::Initialize(type);	// init multithreading
     machine = new Machine(debugUserProg);
     fileSystem = new FileSystem();
 	#ifdef FILESYS
 		synchDisk = new SynchDisk("New SynchDisk");
 	#endif // FILESYS
 }
-
+/*-----------------------Homework for CPU Scheduling------------------------*/
 //----------------------------------------------------------------------
 // UserProgKernel::~UserProgKernel
 // 	Nachos is halting.  De-allocate global data structures.
