@@ -437,6 +437,10 @@ Thread::SelfTest()
     SimpleThread(0);
 }
 
+
+/* ********************************************* 
+    Self-defined
+********************************************* */
 void threadBody()
 {
     Thread *thread = kernel->currentThread;
