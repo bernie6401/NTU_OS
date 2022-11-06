@@ -52,13 +52,13 @@ UserProgKernel::UserProgKernel(int argc, char **argv): ThreadedKernel(argc, argv
 // 	Initialize Nachos global data structures.
 //----------------------------------------------------------------------
 /*-----------------------Homework for CPU Scheduling------------------------*/
-void UserProgKernel::Initialize()
+// void UserProgKernel::Initialize()
+// {
+// 	Initialize(RR);
+// }
+void UserProgKernel::Initialize()//SchedulerType type
 {
-	Initialize(RR);
-}
-void UserProgKernel::Initialize(SchedulerType type)
-{
-    ThreadedKernel::Initialize(type);	// init multithreading
+    ThreadedKernel::Initialize();	// init multithreading
     machine = new Machine(debugUserProg);
     fileSystem = new FileSystem();
 	#ifdef FILESYS
