@@ -101,15 +101,16 @@ ThreadedKernel::Run()
 //      Test whether this module is working.
 //----------------------------------------------------------------------
 
-void
-ThreadedKernel::SelfTest() {
+void ThreadedKernel::SelfTest() {
    Semaphore *semaphore;
    SynchList<int> *synchList;
    
    LibSelfTest();		// test library routines
    
    currentThread->SelfTest();	// test thread switching
-   
+   /*-----------------------Homework for CPU Scheduling------------------------*/
+   Thread::SchedulingTest();
+   /*-----------------------Homework for CPU Scheduling------------------------*/
    				// test semaphore operation
    semaphore = new Semaphore("test", 0);
    semaphore->SelfTest();
