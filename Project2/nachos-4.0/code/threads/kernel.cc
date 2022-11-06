@@ -45,11 +45,11 @@ ThreadedKernel::ThreadedKernel(int argc, char **argv)
 //	data via the "kernel" global variable.
 //----------------------------------------------------------------------
 
-// void ThreadedKernel::Initialize()
-// {
-// 	Initialize(RR);
-// }
-void ThreadedKernel::Initialize()//SchedulerType type
+void ThreadedKernel::Initialize()
+{
+	Initialize(RR);
+}
+void ThreadedKernel::Initialize(SchedulerType type)//
 {
     stats = new Statistics();		// collect statistics
     interrupt = new Interrupt;		// start up interrupt handling
