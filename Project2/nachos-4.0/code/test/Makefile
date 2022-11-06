@@ -73,9 +73,9 @@ test2: test2.o start.o
 	../bin/coff2noff test2.coff test2
 
 sleep1: sleep1.o start.o
-    $(LD) $(LDFLAGS) start.o sleep1.o -o sleep1.coff
-    ../bin/coff2noff sleep1.coff sleep1
+	$(LD) $(LDFLAGS) start.o sleep1.o -o sleep1.coff
+	../bin/coff2noff sleep1.coff sleep1
 
 sleep2: sleep2.o start.o
-    $(LD) $(LDFLAGS) start.o sleep2.o -o sleep2.coff
-    ../bin/coff2noff sleep2.coff sleep2
+	$(LD) $(LDFLAGS) start.o sleep2.o -o sleep2.coff
+	../bin/coff2noff sleep2.coff sleep2
