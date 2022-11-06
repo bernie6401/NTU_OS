@@ -87,7 +87,7 @@ We'd like to add sleep() function in system call
    > *	"which" is the kind of exception.  The list of possible exceptions are in machine.h.
 
    So, observe the previous case, SC_PrintInt, we can guess the value stored in `kernel->machine->Readgister(4)`. The code is like this...
-   
+
    ```c++
    /* ********************************************* 
    Self-defined
@@ -97,9 +97,9 @@ We'd like to add sleep() function in system call
        cout << "Sleep a while:" <<val << "(ms)" << endl;
        return;
    ```
-   
+
    But, this code **can not really stop the executing** instead of printing out a normal message. So, refer to the assignment note, we should check **`kernel->alarm->WaitUntil()`** function that'll really implement sleep function in **threads/alarm.h**. The result after adding the code is just like...
-   
+
    ```c++
    /* ********************************************* 
    Self-defined
@@ -110,8 +110,11 @@ We'd like to add sleep() function in system call
        kernel->alarm->WaitUntil(val);
        return;
    ```
+   *More info about WainUntil() function and interrupt, you can check out [here](http://blog.terrynini.tw/tw/OS-NachOS-HW1/#%E4%B8%AD%E6%96%B7%E5%B8%B8%E5%BC%8F)
 
-6. 
+6. **The most important part**
+
+   Define a class named **sleepList** in alarm.h and implement the methods in alarm.cc. All the other description can check out [OS-NachOS-HW1](http://blog.terrynini.tw/tw/OS-NachOS-HW1/#中斷常式) and use VSode can be more clearly. Lazy to write it down.
 
 7. Refer to [OS-NachOS-HW1](http://blog.terrynini.tw/tw/OS-NachOS-HW1/#測試-1), you can write your own testing case or just use the ready-made test case on the web. Note that you must revise `Makefile` in `code/test/Makefile` like this...
 
@@ -149,8 +152,75 @@ We'd like to add sleep() function in system call
    	cd test; make all
    ```
 
-   
+   *Error message I encountered:
 
+   ```
+   ...
+   ../bin/coff2noff halt.coff halt
+   make[1]: execvp: ../bin/coff2noff: Permission denied
+   make[1]: *** [halt] Error 127
+   make[1]: Leaving directory `/home/sbk/NTU/Operating System/Project2/nachos-4.0/code/test'
+   make: *** [all] Error 2
+   ```
+
+   According to [Why do I get permission denied when I try use "make" to install something?](https://stackoverflow.com/questions/9106536/why-do-i-get-permission-denied-when-i-try-use-make-to-install-something) page on StackOverflow, just use `chmod 777 ./bin/coff2noff` in `./code` folder.
+
+8. Testing result
+
+   I create another test case named Sleep3.c and aim to test the sleep time **10 times longer** than Sleep1.c and Sleep2.c is aim to test the time that **100 times shorter** than Sleep1.c.
+
+   * sleep1
+
+     ```c++
+     #include "syscall.h"
+     main() {
+         int i;
+         for(i = 0; i < 5; i++) {
+             Sleep(1000000);
+             PrintInt(2222);
+         }
+         return 0;
+     }
+     ```
+
+     ![testing result for sleep1](https://imgur.com/wk19ont.png)
+
+   * Sleep2
+
+     ```c++
+     #include "syscall.h"
+     main() {
+         int i;
+         for(i = 0; i < 5; i++) {
+             Sleep(10000);
+             PrintInt(99999);
+         }
+         return 0;
+     }
+     ```
+
+     ![result for sleep2](https://imgur.com/5r37MJg.png)
+
+   * Sleep3
+
+     ```c++
+     #include "syscall.h"
+     main() {
+         int i;
+         for(i = 0; i < 5; i++) {
+             Sleep(10000000);
+             PrintInt(666);
+         }
+         return 0;
+     }
+     ```
+
+     ![result for sleep3](https://imgur.com/rrOmAJm.png)
+
+   In Sleep1.c, you can feel the sleep function working clearly that compare with a normal code without sleep function or compare with a shorter sleep time such as Sleep2.c
+   And in Sleep3.c, you can feel the sleeping time much more longer that what we expected but just execute 3 times PrintInt function.
+
+9. 
 
 ## Implement CPU Scheduling
 
