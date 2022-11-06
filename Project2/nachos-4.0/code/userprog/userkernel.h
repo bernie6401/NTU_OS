@@ -33,7 +33,7 @@ class UserProgKernel : public ThreadedKernel {
     void Initialize();		// initialize the kernel
 
     /*-----------------------Homework for CPU Scheduling------------------------*/
-    // void Initialize(SchedulerType type);
+    void Initialize(SchedulerType type);
     /*-----------------------Homework for CPU Scheduling------------------------*/
 
     void Run();			// do kernel stuff 
