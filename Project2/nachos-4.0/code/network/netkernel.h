@@ -29,7 +29,7 @@ class NetKernel : public UserProgKernel {
     void Initialize();		// initialize the kernel
 
     /*-----------------------Homework for CPU Scheduling------------------------*/
-    void Initialize(SchedulerType);
+    void Initialize(SchedulerType type);
     /*-----------------------Homework for CPU Scheduling------------------------*/
 
     void Run();			// do kernel stuff 
