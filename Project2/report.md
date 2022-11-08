@@ -1,15 +1,12 @@
-# NTU Operating System Project2
+# NTU Operating System Project 2
+## Motivation
+* For the first task, We'd like to add sleep() function in system call that can help us call sleep in our program.
+* For the second task, we'd like to implement CPU scheduling by FIFO(First-In-First-Out), SJF(Shortest-Job-First), Priority, RR(Round-Robin), and multi-level queue.
 
-## Implement System Call
-
-### Objective
-
-We'd like to add sleep() function in system call
-
-### Observation
+## Implementation
+### Task1 - System Call
 
 1. First of all, we need to define a new token, SC_Sleep,  that compiler(scanner) can recognize in `code/userprog/syscall.h`.
-
 2. So, we have to assign a number to SC_Sleep that it can return the value.
 
    ```c++
@@ -24,7 +21,6 @@ We'd like to add sleep() function in system call
    #define SC_Sleep    12.
    ...
    ```
-
 3. Then, observe the other define words like SC_PrintInt in the same file. You can see there're lots of declaration function for each system call such as `void PrintInt(int number);` or `void ThreadFork(void (*func)());`,etc.. So, we must declare a function for sleep system call.
 
    ```c++
@@ -36,7 +32,6 @@ We'd like to add sleep() function in system call
    #endif /* IN_ASM */
    ...
    ```
-
 4. According to the assignment description file, another file should be checked is start.s in test/start.s.
 
    According to the comment above this file, it's a file to assist system calls to **NachOS kernel** by assembly language.
@@ -60,9 +55,6 @@ We'd like to add sleep() function in system call
    	j       $31
    	.end    Sleep
    ```
-
-   
-
 5. From assignment description file, we should catch the exception situation by userprog/exception.cc. So, we need to define a new case in this file.
 
    According to the comment above in exception.cc
@@ -111,11 +103,9 @@ We'd like to add sleep() function in system call
        return;
    ```
    *More info about WainUntil() function and interrupt, you can check out [here](http://blog.terrynini.tw/tw/OS-NachOS-HW1/#%E4%B8%AD%E6%96%B7%E5%B8%B8%E5%BC%8F)
-
 6. **The most important part**
 
    Define a class named **sleepList** in alarm.h and implement the methods in alarm.cc. All the other description can check out [OS-NachOS-HW1](http://blog.terrynini.tw/tw/OS-NachOS-HW1/#中斷常式) and use VSode can be more clearly. Lazy to write it down.
-
 7. Refer to [OS-NachOS-HW1](http://blog.terrynini.tw/tw/OS-NachOS-HW1/#測試-1), you can write your own testing case or just use the ready-made test case on the web. Note that you must revise `Makefile` in `code/test/Makefile` like this...
 
    ```makefile
@@ -165,68 +155,8 @@ We'd like to add sleep() function in system call
 
    According to [Why do I get permission denied when I try use "make" to install something?](https://stackoverflow.com/questions/9106536/why-do-i-get-permission-denied-when-i-try-use-make-to-install-something) page on StackOverflow, just use `chmod 777 ./bin/coff2noff` in `./code` folder.
 
-***
-### Testing result
-I create another test case named Sleep3.c and aim to test the sleep time **10 times longer** than Sleep1.c and Sleep2.c is aim to test the time that **100 times shorter** than Sleep1.c.
-
-   * sleep1
-
-     ```c++
-     #include "syscall.h"
-     main() {
-         int i;
-         for(i = 0; i < 5; i++) {
-             Sleep(1000000);
-             PrintInt(2222);
-         }
-         return 0;
-     }
-     ```
-
-     ![testing result for sleep1](https://imgur.com/wk19ont.png)
-
-   * Sleep2
-
-     ```c++
-     #include "syscall.h"
-     main() {
-         int i;
-         for(i = 0; i < 5; i++) {
-             Sleep(10000);
-             PrintInt(99999);
-         }
-         return 0;
-     }
-     ```
-
-     ![result for sleep2](https://imgur.com/5r37MJg.png)
-
-   * Sleep3
-
-     ```c++
-     #include "syscall.h"
-     main() {
-         int i;
-         for(i = 0; i < 5; i++) {
-             Sleep(10000000);
-             PrintInt(666);
-         }
-         return 0;
-     }
-     ```
-
-     ![result for sleep3](https://imgur.com/rrOmAJm.png)
-
-   In Sleep1.c, you can feel the sleep function working clearly that compare with a normal code without sleep function or compare with a shorter sleep time such as Sleep2.c
-   And in Sleep3.c, you can feel the sleeping time much more longer that what we expected but just execute 3 times PrintInt function.**(No idea why)**
-
-## Implement CPU Scheduling
-
-### Objective
-
-Implement CPU scheduling by FIFO(First-In-First-Out), SJF(Shortest-Job-First), Priority, RR(Round-Robin), and multi-level queue.
-
-### Observation
+   
+### Task2 - CPU Scheduling
 #### Testing
 1. **_threads/thread.cc_** - create a test case
 
@@ -310,9 +240,6 @@ Implement CPU scheduling by FIFO(First-In-First-Out), SJF(Shortest-Job-First), P
    $ ./nachos Priority
    $ ./nachos RR
    ```
-
-   
-
    ```c++
    int main(int argc, char **argv)
    {
@@ -331,8 +258,7 @@ Implement CPU scheduling by FIFO(First-In-First-Out), SJF(Shortest-Job-First), P
        ...
    }
    ```
-
----------------------------------------
+***
 #### Implement
 5. **_machine/machine.h_** - let NumPhysPage bigger to avoid **segmentation fault (core dumped)** which is an error message about memory allocation **(note that this error is hard to debug)**.
 
@@ -360,7 +286,7 @@ Implement CPU scheduling by FIFO(First-In-First-Out), SJF(Shortest-Job-First), P
    		...
    		~Scheduler();
    		Scheduler(SchedulerType type);		// Initialize list of ready threads
-   		SchedulerType getSchedulerType() {return schedulerType;}	// Add this line
+   		SchedulerType getSchedulerType() {return schedulerType;}
        	void setSchedulerType(SchedulerType t) {schedulerType = t;}
        	...
    };
@@ -418,7 +344,7 @@ Implement CPU scheduling by FIFO(First-In-First-Out), SJF(Shortest-Job-First), P
 
 8. **_threads/alarm.cc_** - if you want to implement **_preemptive_**, you need to determine whether call `interrupt->YieldOnReturn()` or not in `Alarm::CallBack()`
 
-   And for the computing burst time, if you decide to use **running time estimation**, you need to compute in `Alarm::WaitUntil()` shown as below
+    And for the computing burst time, if you decide to use **running time estimation**, you need to compute in `Alarm::WaitUntil()` shown as below
 
    ```c++
    void Alarm::CallBack()
@@ -446,11 +372,10 @@ Implement CPU scheduling by FIFO(First-In-First-Out), SJF(Shortest-Job-First), P
    	...
    }
    ```
-
 ***
 #### Revise Some files
-
 You have to include `scheduler.h` to each header file that we'll use that including `kernel.h`, `userkernel.h`, and `netkernel.h`. Then initial the scheduler type in each c file such as `kernel.cc`, `userkernel.cc`, and `netkernel.cc`. Most of them are very similar.
+
 9. **_threads/kernel.h_**
 
     ```c++
@@ -465,7 +390,7 @@ You have to include `scheduler.h` to each header file that we'll use that includ
     };
     ```
 
-14. **_threads/kernel.cc_**
+10. **_threads/kernel.cc_**
 
     ```c++
     void ThreadedKernel::Initialize()
@@ -488,22 +413,22 @@ You have to include `scheduler.h` to each header file that we'll use that includ
         interrupt->Enable();
     }
     ```
-9. **_userprog/userkernel.h_**
+11. **_userprog/userkernel.h_**
 
-   ```c++
-   #include "../threads/scheduler.h"
-   
-   class UserProgKernel : public ThreadedKernel
-   {
-   	public:
-   		...
-   		void Initialize();
-   		void Initialize(SchedulerType type);
-   		...
-   };
-   ```
+    ```c++
+    #include "../threads/scheduler.h"
+    
+    class UserProgKernel : public ThreadedKernel
+    {
+    	public:
+    		...
+    		void Initialize();
+    		void Initialize(SchedulerType type);
+    		...
+    };
+    ```
 
-10. **_userprog/userkernel.cc_**
+12. **_userprog/userkernel.cc_**
 
     ```c++
     void UserProgKernel::Initialize()
@@ -521,7 +446,7 @@ You have to include `scheduler.h` to each header file that we'll use that includ
     }
     ```
 
-11. **_network/netkernel.h_**
+13. **_network/netkernel.h_**
 
     ```c++
     #include "../threads/scheduler.h"
@@ -536,7 +461,7 @@ You have to include `scheduler.h` to each header file that we'll use that includ
     };
     ```
 
-12. **_network/netkernel.cc_**
+14. **_network/netkernel.cc_**
 
     ```c++
     void NetKernel::Initialize()
@@ -551,22 +476,74 @@ You have to include `scheduler.h` to each header file that we'll use that includ
     }
     ```
 
-***
 
-#### Testing result
-* Result of real multi thread testing
-![result of real multi thread testing](https://imgur.com/tqovjLx.png)
-* Result of FCFS
-![result of FCFS](https://imgur.com/gncST5x.png)
-* Result of RR
-![result of RR](https://imgur.com/yIi317H.png)
-* Result of SJF
-![result of SJF](https://imgur.com/BMgDkp2.png)
-* Result of priority
-![result of priority](https://imgur.com/KfFpOP3.png)
 
-## Reference
+​    
 
-* [OS-NachOS-HW1](http://blog.terrynini.tw/tw/OS-NachOS-HW1/)
-* [向 NachOS 4.0 作業進發 (2)](https://morris821028.github.io/2014/05/30/lesson/hw-nachos4-2/)
-* [OS 2020 HW2 Nachos Report](https://hackmd.io/@Z_yUjsyqRzaD5rSUQ6JOVw/S1hiIHr5D)
+## Result
+* Task 1 Result
+  I create another test case named Sleep3.c and aim to test the sleep time **10 times longer** than Sleep1.c and Sleep2.c is aim to test the time that **100 times shorter** than Sleep1.c.
+
+   * sleep1
+
+     ```c++
+     #include "syscall.h"
+     main() {
+         int i;
+         for(i = 0; i < 5; i++) {
+             Sleep(1000000);
+             PrintInt(2222);
+         }
+         return 0;
+     }
+     ```
+
+     ![testing result for sleep1](https://imgur.com/wk19ont.png)
+
+   * Sleep2
+
+     ```c++
+     #include "syscall.h"
+     main() {
+         int i;
+         for(i = 0; i < 5; i++) {
+             Sleep(10000);
+             PrintInt(99999);
+         }
+         return 0;
+     }
+     ```
+
+     ![result for sleep2](https://imgur.com/5r37MJg.png)
+
+   * Sleep3
+
+     ```c++
+     #include "syscall.h"
+     main() {
+         int i;
+         for(i = 0; i < 5; i++) {
+             Sleep(10000000);
+             PrintInt(666);
+         }
+         return 0;
+     }
+     ```
+
+     ![result for sleep3](https://imgur.com/rrOmAJm.png)
+
+   In Sleep1.c, you can feel the sleep function working clearly that compare with a normal code without sleep function or compare with a shorter sleep time such as Sleep2.c
+   And in Sleep3.c, you can feel the sleeping time much more longer that what we expected but just execute 3 times PrintInt function.**(No idea why)**
+
+
+* Task 2 Result
+    * Result of real multi thread testing
+    ![result of real multi thread testing](https://imgur.com/tqovjLx.png)
+    * Result of FCFS
+    ![result of FCFS](https://imgur.com/gncST5x.png)
+    * Result of RR
+    ![result of RR](https://imgur.com/yIi317H.png)
+    * Result of SJF
+    ![result of SJF](https://imgur.com/BMgDkp2.png)
+    * Result of priority
+    ![result of priority](https://imgur.com/KfFpOP3.png)
