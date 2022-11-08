@@ -44,16 +44,19 @@ ThreadedKernel::ThreadedKernel(int argc, char **argv)
 //	constructor because some of these refer to earlier initialized
 //	data via the "kernel" global variable.
 //----------------------------------------------------------------------
-
+/*-----------------------Homework for CPU Scheduling------------------------*/
 void ThreadedKernel::Initialize()
 {
 	Initialize(RR);
 }
+/*-----------------------Homework for CPU Scheduling------------------------*/
 void ThreadedKernel::Initialize(SchedulerType type)//
 {
     stats = new Statistics();		// collect statistics
     interrupt = new Interrupt;		// start up interrupt handling
+    /*-----------------------Homework for CPU Scheduling------------------------*/
     scheduler = new Scheduler(type);	// initialize the ready queue
+    /*-----------------------Homework for CPU Scheduling------------------------*/
     alarm = new Alarm(randomSlice);	// start up time slicing
 
     // We didn't explicitly allocate the current thread we are running in.

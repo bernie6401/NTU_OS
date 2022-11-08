@@ -218,12 +218,354 @@ We'd like to add sleep() function in system call
      ![result for sleep3](https://imgur.com/rrOmAJm.png)
 
    In Sleep1.c, you can feel the sleep function working clearly that compare with a normal code without sleep function or compare with a shorter sleep time such as Sleep2.c
-   And in Sleep3.c, you can feel the sleeping time much more longer that what we expected but just execute 3 times PrintInt function.
-
-9. 
+   And in Sleep3.c, you can feel the sleeping time much more longer that what we expected but just execute 3 times PrintInt function.**(No idea why)**
 
 ## Implement CPU Scheduling
+
+### Objective
+
+Implement CPU scheduling by FIFO(First-In-First-Out), SJF(Shortest-Job-First), Priority, RR(Round-Robin), and multi-level queue.
+
+### Observation
+
+1. **_threads/thread.cc_**
+
+   ```c
+   ...
+   void threadBody()
+   {
+       Thread *thread = kernel->currentThread;
+       while (thread->getBurstTime() > 0)
+       {
+           thread->setBurstTime(thread->getBurstTime() - 1);
+           kernel->interrupt->OneTick();
+           printf("%s: remaining %d\n", kernel->currentThread->getName(), kernel->currentThread->getBurstTime());
+       }
+   }
+   void Thread::SchedulingTest()
+   {
+       const int thread_num = 4;
+       char *name[thread_num] = {"A", "B", "C", "D"};
+       int thread_priority[thread_num] = {5, 1, 3, 2};
+       int thread_burst[thread_num] = {3, 9, 7, 3};
+       
+       Thread *t;
+       for (int i = 0; i < thread_num; i ++)
+       {
+           t = new Thread(name[i]);
+           t->setPriority(thread_priority[i]);
+           t->setBurstTime(thread_burst[i]);
+           t->Fork((VoidFunctionPtr) threadBody, (void *)NULL);
+       }
+       kernel->currentThread->Yield();
+   }
+   ```
+
+   
+
+2. **_threads/thread.h_**
+
+   ```c++
+   class Thread
+   {
+   	private:
+   		...
+   	public:
+   		...
+   		void setBurstTime(int t)    {burstTime = t;}
+           int getBurstTime()		      {return burstTime;}
+           void setStartTime(int t)	  {startTime = t;}
+           int getStartTime()		      {return startTime;}
+           void setPriority(int t)	    {execPriority = t;}
+           int getPriority()		        {return execPriority;}
+           static void SchedulingTest();
+           ...
+   	private:
+   		int burstTime;	// predicted burst time
+       	int startTime;	// the start time of the thread
+       	int execPriority;	// the execute priority of the thread
+       	...
+   };
+   ```
+
+   
+
+3. **_threads/kernel.cc_**
+
+   ```c++
+   void ThreadedKernel::SelfTest()
+   {
+   	...
+   	LibSelfTest();		// test library routines
+   	currentThread->SelfTest();	// test thread switching
+   	Thread::SchedulingTest();
+   								// test semaphore operation
+   	semaphore = new Semaphore("test", 0);
+   	...
+   }
+   ```
+
+   
+
+4. **_threads/main.cc_**
+
+   ```c++
+   int main(int argc, char **argv)
+   {
+   	...
+   	DEBUG(dbgThread, "Entering main");
+   	SchedulerType type = RR;
+       if(strcmp(argv[1], "FCFS") == 0)
+           type = FIFO;
+       else if (strcmp(argv[1], "SJF") == 0)
+           type = SJF;
+       else if (strcmp(argv[1], "PRIORITY") == 0)
+           type = Priority;
+       else if (strcmp(argv[1], "RR") == 0)
+           type = RR;
+       kernel = new KernelType(argc, argv);
+       ...
+   }
+   ```
+
+   
+
+5. **_machine/machine.h_**
+
+   ```c++
+   const unsigned int PageSize = 128; 		// set the page size equal to
+   										// the disk sector size, for simplicity
+   const unsigned int NumPhysPages = 256;	// Change this line
+   const int MemorySize = (NumPhysPages * PageSize);
+   const int TLBSize = 4;					// if there is a TLB, make it small
+   ```
+
+   
+
+6. **_threads/scheduler.h_**
+
+   ```
+   enum SchedulerType
+   {
+           RR,     // Round Robin
+           SJF,
+           Priority,
+   		FIFO	// Add this line
+   };
+   class Scheduler
+   {
+   	public:
+   		...
+   		~Scheduler();
+   		Scheduler(SchedulerType type);		// Initialize list of ready threads
+   		SchedulerType getSchedulerType() {return schedulerType;}
+       	void setSchedulerType(SchedulerType t) {schedulerType = t;}
+       	...
+   };
+   ```
+
+   
+
+7. **_threads/scheduler.cc_**
+
+   ```c++
+   int SJFCompare(Thread *a, Thread *b)
+   {
+       if(a->getBurstTime() == b->getBurstTime())
+           return 0;
+       return a->getBurstTime() > b->getBurstTime() ? 1 : -1;
+   }
+   int PriorityCompare(Thread *a, Thread *b)
+   {
+       if(a->getPriority() == b->getPriority())
+           return 0;
+       return a->getPriority() > b->getPriority() ? 1 : -1;
+   }
+   int FIFOCompare(Thread *a, Thread *b)
+   {
+       return 1;
+   }
+   //----------------------------------------------------------------------
+   // Scheduler::Scheduler
+   // 	Initialize the list of ready but not running threads.
+   //	Initially, no ready threads.
+   //----------------------------------------------------------------------
+   Scheduler::Scheduler()
+   {
+       Scheduler(RR);
+   }
+   Scheduler::Scheduler(SchedulerType type)
+   {
+   	schedulerType = type;
+   	// readyList = new List<Thread *>;
+       switch(schedulerType)
+       {
+           case RR:
+               readyList = new List<Thread *>;
+               break;
+           case SJF:
+               readyList = new SortedList<Thread *>(SJFCompare);
+               break;
+           case Priority:
+               readyList = new SortedList<Thread *>(PriorityCompare);
+               break;
+           case FIFO:
+               readyList = new SortedList<Thread *>(FIFOCompare);
+       }
+   	toBeDestroyed = NULL;
+   } 
+   ```
+
+   
+
+8. **_threads/alarm.cc_**
+
+   ```c++
+   void Alarm::CallBack()
+   {
+   	...
+       if (status == IdleMode && !woken && _sleepList.IsEmpty())
+       	...
+       else    // there's someone to preempt
+       {
+           if(kernel->scheduler->getSchedulerType() == RR || kernel->scheduler->getSchedulerType() == Priority )
+           {
+               cout << "=== interrupt->YieldOnReturn ===" << endl;
+               interrupt->YieldOnReturn();
+           }
+       }
+   }
+   void Alarm::WaitUntil(int x)
+   {
+   	...
+       Thread* t = kernel->currentThread;
+   
+       int worktime = kernel->stats->userTicks - t->getStartTime();
+       t->setBurstTime(t->getBurstTime() + worktime);
+       t->setStartTime(kernel->stats->userTicks);
+   	...
+   }
+   ```
+
+   
+
+9. **_userprog/userkernel.h_**
+
+   ```
+   #include "../threads/scheduler.h"
+   
+   class UserProgKernel : public ThreadedKernel
+   {
+   	public:
+   		...
+   		void Initialize();
+   		void Initialize(SchedulerType type);
+   		...
+   };
+   ```
+
+   
+
+10. **_userprog/userkernel.cc_**
+
+    ```c++
+    void UserProgKernel::Initialize()
+    {
+    	Initialize(RR);
+    }
+    void UserProgKernel::Initialize(SchedulerType type)//
+    {
+        ThreadedKernel::Initialize(type);	// init multithreading
+        machine = new Machine(debugUserProg);
+        fileSystem = new FileSystem();
+    	#ifdef FILESYS
+    		synchDisk = new SynchDisk("New SynchDisk");
+    	#endif // FILESYS
+    }
+    ```
+
+    
+
+11. **_network/netkernel.h_**
+
+    ```
+    #include "../threads/scheduler.h"
+    
+    class NetKernel : public UserProgKernel
+    {
+    	public:
+    		...
+    		void Initialize();
+    		void Initialize(SchedulerType type);
+    		...
+    };
+    ```
+
+    
+
+12. **_network/netkernel.cc_**
+
+    ```c++
+    void NetKernel::Initialize()
+    {
+        Initialize(RR);
+    }
+    void NetKernel::Initialize(SchedulerType type)//
+    {
+        UserProgKernel::Initialize(type);	// init other kernel data structs
+        postOfficeIn = new PostOfficeInput(10);
+        postOfficeOut = new PostOfficeOutput(reliability, 10);
+    }
+    ```
+
+    
+
+13. **_threads/kernel.h_**
+
+    ```c++
+    ...
+    class ThreadedKernel
+    {
+    	public:
+    		...
+    		void Initialize();
+    		void Initialize(SchedulerType type);
+    		...
+    };
+    ```
+
+    
+
+14. **_threads/kernel.cc_**
+
+    ```c++
+    void ThreadedKernel::Initialize()
+    {
+    	Initialize(RR);
+    }
+    void ThreadedKernel::Initialize(SchedulerType type)//
+    {
+        stats = new Statistics();		// collect statistics
+        interrupt = new Interrupt;		// start up interrupt handling
+        scheduler = new Scheduler(type);	// initialize the ready queue
+        alarm = new Alarm(randomSlice);	// start up time slicing
+    
+        // We didn't explicitly allocate the current thread we are running in.
+        // But if it ever tries to give up the CPU, we better have a Thread
+        // object to save its state. 
+        currentThread = new Thread("main");		
+        currentThread->setStatus(RUNNING);
+    
+        interrupt->Enable();
+    }
+    ```
+
+    
+
+
 
 ## Reference
 
 * [OS-NachOS-HW1](http://blog.terrynini.tw/tw/OS-NachOS-HW1/)
+* [向 NachOS 4.0 作業進發 (2)](https://morris821028.github.io/2014/05/30/lesson/hw-nachos4-2/)
+* [OS 2020 HW2 Nachos Report](https://hackmd.io/@Z_yUjsyqRzaD5rSUQ6JOVw/S1hiIHr5D)
