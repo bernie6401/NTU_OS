@@ -130,10 +130,13 @@ bool AddrSpace::Load(char *fileName)
     size = numPages * PageSize;
 
     // SBK: Verify if there is enough space page
-    ASSERT(numPages <= NumPhysPages);		// check we're not trying
-                                            // to run anything too big --
-                                            // at least until we have
-                                            // virtual memory
+    /*-----------------------Homework for Memory Management------------------------*/
+    /* For HW3 is no longer needed  */
+    // ASSERT(numPages <= NumPhysPages);		// check we're not trying
+                                                // to run anything too big --
+                                                // at least until we have
+                                                // virtual memory
+    /*-----------------------Homework for Memory Management------------------------*/
     // Allocate
     pageTable = new TranslationEntry[numPages];
     for(unsigned int i = 0, idx = 0; i < numPages; i++)
@@ -158,8 +161,52 @@ bool AddrSpace::Load(char *fileName)
     {
         DEBUG(dbgAddr, "Initializing code segment.");
 	    DEBUG(dbgAddr, noffH.code.virtualAddr << ", " << noffH.code.size);
-        executable->ReadAt(&(kernel->machine->mainMemory[pageTable[noffH.code.virtualAddr/PageSize].physicalPage * PageSize + (noffH.code.virtualAddr%PageSize)]), noffH.code.size, noffH.code.inFileAddr);
+        /*-----------------------Homework for Multithread------------------------*/
+        // For HW3 is no longer needed
+        // executable->ReadAt(&(kernel->machine->mainMemory[pageTable[noffH.code.virtualAddr/PageSize].physicalPage * PageSize + (noffH.code.virtualAddr%PageSize)]), noffH.code.size, noffH.code.inFileAddr);
+        /*-----------------------Homework for Multithread------------------------*/
         // executable->ReadAt(&(kernel->machine->mainMemory[noffH.code.virtualAddr]), noffH.code.size, noffH.code.inFileAddr);
+
+        /*-----------------------Homework for Memory Management------------------------*/
+        for(unsigned int j=0,i=0;i < numPages ;i++)
+        {
+            j=0;
+            while(kernel->machine->UsedPhyPage[j]!=FALSE&&j<NumPhysPages){j++;}
+
+            // main memory is enough, put the page to main memory
+            if(j<NumPhysPages)
+            {   
+                kernel->machine->UsedPhyPage[j]=TRUE;
+                kernel->machine->PhyPageInfo[j]=ID;
+                kernel->machine->main_tab[j]=&pageTable[i];
+                pageTable[i].physicalPage = j;
+                pageTable[i].valid = TRUE;
+                pageTable[i].use = FALSE;
+                pageTable[i].dirty = FALSE;
+                pageTable[i].readOnly = FALSE;
+                pageTable[i].ID =ID;
+                pageTable[i].LRU_counter++; // LRU counter when save in memory
+                executable->ReadAt(&(kernel->machine->mainMemory[j*PageSize]),PageSize, noffH.code.inFileAddr+(i*PageSize));  
+            }
+            // main memory is not enough, use virtual memory
+            else
+            { 
+                char *buffer;
+                buffer = new char[PageSize];
+                tmp=0;
+                while(kernel->machine->UsedVirtualPage[tmp]!=FALSE){tmp++;}
+                kernel->machine->UsedVirtualPage[tmp]=true;
+                pageTable[i].virtualPage=tmp; //record the virtual page we save 
+                pageTable[i].valid = FALSE; //not load in main memory
+                pageTable[i].use = FALSE;
+                pageTable[i].dirty = FALSE;
+                pageTable[i].readOnly = FALSE;
+                pageTable[i].ID =ID;
+                executable->ReadAt(buffer,PageSize, noffH.code.inFileAddr+(i*PageSize));
+                kernel->SwapDisk->WriteSector(tmp,buffer); // write in virtual memory (SwapDisk)
+            }
+        }
+        /*-----------------------Homework for Memory Management------------------------*/
     }
 	if (noffH.initData.size > 0)
     {
@@ -169,7 +216,7 @@ bool AddrSpace::Load(char *fileName)
         // executable->ReadAt(&(kernel->machine->mainMemory[noffH.initData.virtualAddr]),noffH.initData.size, noffH.initData.inFileAddr);
     }
 
-    delete executable;			// close file
+    delete executable;      // close file
     return TRUE;			// success
 }
 
@@ -228,9 +275,9 @@ AddrSpace::InitRegisters()
     // of branch delay possibility
     machine->WriteRegister(NextPCReg, 4);
 
-   // Set the stack register to the end of the address space, where we
-   // allocated the stack; but subtract off a bit, to make sure we don't
-   // accidentally reference off the end!
+    // Set the stack register to the end of the address space, where we
+    // allocated the stack; but subtract off a bit, to make sure we don't
+    // accidentally reference off the end!
     machine->WriteRegister(StackReg, numPages * PageSize - 16);
     DEBUG(dbgAddr, "Initializing stack pointer: " << numPages * PageSize - 16);
 }

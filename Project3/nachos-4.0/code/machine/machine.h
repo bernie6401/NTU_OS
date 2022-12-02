@@ -28,11 +28,20 @@
 // Definitions related to the size, and format of user memory
 
 const unsigned int PageSize = 128; 		// set the page size equal to
-					// the disk sector size, for simplicity
+										// the disk sector size, for simplicity
 
 const unsigned int NumPhysPages = 256;	//-----------------------Homework------------------------old version is 32
 const int MemorySize = (NumPhysPages * PageSize);
 const int TLBSize = 4;			// if there is a TLB, make it small
+
+/*-----------------------Homework for Memory Management------------------------*/
+bool UsedPhyPage[NumPhysPages]; //record the pages in the main memory
+bool UsedVirtualPage[NumPhysPages]; //record the pages in the virtual memory
+int  ID_number; // machine ID
+int PhyPageInfo[NumPhysPages]; //record physical page info (ID)
+/*-----------------------Homework for Memory Management------------------------*/
+
+TranslationEntry *main_tab[NumPhysPages]; // pagetable
 
 enum ExceptionType { NoException,           // Everything ok!
 		     SyscallException,      // A program executed a system call.
@@ -85,13 +94,14 @@ enum ExceptionType { NoException,           // Everything ok!
 class Instruction;
 class Interrupt;
 
-class Machine {
+class Machine
+{
   public:
     Machine(bool debug);	// Initialize the simulation of the hardware
 				// for running user programs
     ~Machine();			// De-allocate the data structures
 
-// Routines callable by the Nachos kernel
+	// Routines callable by the Nachos kernel
     void Run();	 		// Run a user program
 
     int ReadRegister(int num);	// read the contents of a CPU register
@@ -99,32 +109,32 @@ class Machine {
     void WriteRegister(int num, int value);
 				// store a value into a CPU register
 
-// Data structures accessible to the Nachos kernel -- main memory and the
-// page table/TLB.
-//
-// Note that *all* communication between the user program and the kernel 
-// are in terms of these data structures (plus the CPU registers).
+	// Data structures accessible to the Nachos kernel -- main memory and the
+	// page table/TLB.
+	//
+	// Note that *all* communication between the user program and the kernel 
+	// are in terms of these data structures (plus the CPU registers).
 
     char *mainMemory;		// physical memory to store user program,
 				// code and data, while executing
 
-// NOTE: the hardware translation of virtual addresses in the user program
-// to physical addresses (relative to the beginning of "mainMemory")
-// can be controlled by one of:
-//	a traditional linear page table
-//  	a software-loaded translation lookaside buffer (tlb) -- a cache of 
-//	  mappings of virtual page #'s to physical page #'s
-//
-// If "tlb" is NULL, the linear page table is used
-// If "tlb" is non-NULL, the Nachos kernel is responsible for managing
-//	the contents of the TLB.  But the kernel can use any data structure
-//	it wants (eg, segmented paging) for handling TLB cache misses.
-// 
-// For simplicity, both the page table pointer and the TLB pointer are
-// public.  However, while there can be multiple page tables (one per address
-// space, stored in memory), there is only one TLB (implemented in hardware).
-// Thus the TLB pointer should be considered as *read-only*, although 
-// the contents of the TLB are free to be modified by the kernel software.
+	// NOTE: the hardware translation of virtual addresses in the user program
+	// to physical addresses (relative to the beginning of "mainMemory")
+	// can be controlled by one of:
+	//	a traditional linear page table
+	//  	a software-loaded translation lookaside buffer (tlb) -- a cache of 
+	//	  mappings of virtual page #'s to physical page #'s
+	//
+	// If "tlb" is NULL, the linear page table is used
+	// If "tlb" is non-NULL, the Nachos kernel is responsible for managing
+	//	the contents of the TLB.  But the kernel can use any data structure
+	//	it wants (eg, segmented paging) for handling TLB cache misses.
+	// 
+	// For simplicity, both the page table pointer and the TLB pointer are
+	// public.  However, while there can be multiple page tables (one per address
+	// space, stored in memory), there is only one TLB (implemented in hardware).
+	// Thus the TLB pointer should be considered as *read-only*, although 
+	// the contents of the TLB are free to be modified by the kernel software.
 
     TranslationEntry *tlb;		// this pointer should be considered 
 					// "read-only" to Nachos kernel code
@@ -134,44 +144,44 @@ class Machine {
     bool ReadMem(int addr, int size, int* value);
   private:
 
-// Routines internal to the machine simulation -- DO NOT call these directly
+	// Routines internal to the machine simulation -- DO NOT call these directly
     void DelayedLoad(int nextReg, int nextVal);  	
-				// Do a pending delayed load (modifying a reg)
+						// Do a pending delayed load (modifying a reg)
 
     void OneInstruction(Instruction *instr); 	
-    				// Run one instruction of a user program.
+    					// Run one instruction of a user program.
     
-//    bool ReadMem(int addr, int size, int* value);
+	//    bool ReadMem(int addr, int size, int* value);
     bool WriteMem(int addr, int size, int value);
-    				// Read or write 1, 2, or 4 bytes of virtual 
-				// memory (at addr).  Return FALSE if a 
-				// correct translation couldn't be found.
+						// Read or write 1, 2, or 4 bytes of virtual 
+						// memory (at addr).  Return FALSE if a 
+						// correct translation couldn't be found.
 
     ExceptionType Translate(int virtAddr, int* physAddr, int size,bool writing);
-    				// Translate an address, and check for 
-				// alignment.  Set the use and dirty bits in 
-				// the translation entry appropriately,
-    				// and return an exception code if the 
-				// translation couldn't be completed.
+						// Translate an address, and check for 
+						// alignment.  Set the use and dirty bits in 
+						// the translation entry appropriately,
+						// and return an exception code if the 
+						// translation couldn't be completed.
 
     void RaiseException(ExceptionType which, int badVAddr);
-				// Trap to the Nachos kernel, because of a
-				// system call or other exception.  
+						// Trap to the Nachos kernel, because of a
+						// system call or other exception.  
 
-    void Debugger();		// invoke the user program debugger
-    void DumpState();		// print the user CPU and memory state 
+    void Debugger();	// invoke the user program debugger
+    void DumpState();	// print the user CPU and memory state 
 
 
-// Internal data structures
+	// Internal data structures
 
     int registers[NumTotalRegs]; // CPU registers, for executing user programs
 
     bool singleStep;		// drop back into the debugger after each
-				// simulated instruction
+							// simulated instruction
     int runUntilTime;		// drop back into the debugger when simulated
-				// time reaches this value
+							// time reaches this value
 
- friend class Interrupt;		// calls DelayedLoad()    
+ friend class Interrupt;	// calls DelayedLoad()    
 };
 
 extern void ExceptionHandler(ExceptionType which);

@@ -55,6 +55,15 @@ UserProgKernel::UserProgKernel(int argc, char **argv): ThreadedKernel(argc, argv
 void UserProgKernel::Initialize()
 {
 	Initialize(RR);
+	/*-----------------------Homework for Memory Management------------------------*/
+	// Initialized SwapDisk
+	machine = new Machine(debugUserProg);
+    fileSystem = new FileSystem();
+    SwapDisk = new SynchDisk("New SwapDisk");// Swap disk for virtual memory
+	#ifdef FILESYS
+		synchDisk = new SynchDisk("New SynchDisk");
+	#endif // FILESYS
+	/*-----------------------Homework for Memory Management------------------------*/
 }
 void UserProgKernel::Initialize(SchedulerType type)//
 {
