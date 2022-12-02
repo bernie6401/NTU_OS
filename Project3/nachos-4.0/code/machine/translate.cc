@@ -246,17 +246,17 @@ ExceptionType Machine::Translate(int virtAddr, int* physAddr, int size, bool wri
 				victim = (rand()%32);
 
 				//LRU
-				// int min = pageTable[0].LRU_counter;
-				// victim=0;
-				// for(int index=0;index<32;index++)
-				// {
-				// 	if(min > pageTable[index].LRU_counter)
-				// 	{
-				// 		min = pageTable[index].LRU_counter;
-				// 		victim = index;
-				// 	}
-				// }
-				// pageTable[victim].LRU_counter++;  
+				int min = pageTable[0].LRU_counter;
+				victim=0;
+				for(int index=0;index<32;index++)
+				{
+					if(min > pageTable[index].LRU_counter)
+					{
+						min = pageTable[index].LRU_counter;
+						victim = index;
+					}
+				}
+				pageTable[victim].LRU_counter++;  
 													
 				//printf("Number %d page is swapped out\n",victim);
 

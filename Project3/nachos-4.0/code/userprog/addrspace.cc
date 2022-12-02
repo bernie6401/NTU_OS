@@ -159,10 +159,10 @@ bool AddrSpace::Load(char *fileName)
     // then, copy in the code and data segments into memory
 	if (noffH.code.size > 0)
     {
-        DEBUG(dbgAddr, "Initializing code segment.");
-	    DEBUG(dbgAddr, noffH.code.virtualAddr << ", " << noffH.code.size);
-        /*-----------------------Homework for Multithread------------------------*/
+        /*-----------------------Homework for Multithread------------------------*/;
         // For HW3 is no longer needed
+        // DEBUG(dbgAddr, "Initializing code segment.");
+	    // DEBUG(dbgAddr, noffH.code.virtualAddr << ", " << noffH.code.size)
         // executable->ReadAt(&(kernel->machine->mainMemory[pageTable[noffH.code.virtualAddr/PageSize].physicalPage * PageSize + (noffH.code.virtualAddr%PageSize)]), noffH.code.size, noffH.code.inFileAddr);
         /*-----------------------Homework for Multithread------------------------*/
         // executable->ReadAt(&(kernel->machine->mainMemory[noffH.code.virtualAddr]), noffH.code.size, noffH.code.inFileAddr);
