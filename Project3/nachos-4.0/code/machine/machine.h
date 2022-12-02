@@ -34,12 +34,7 @@ const unsigned int NumPhysPages = 256;	//-----------------------Homework--------
 const int MemorySize = (NumPhysPages * PageSize);
 const int TLBSize = 4;			// if there is a TLB, make it small
 
-/*-----------------------Homework for Memory Management------------------------*/
-bool UsedPhyPage[NumPhysPages]; //record the pages in the main memory
-bool UsedVirtualPage[NumPhysPages]; //record the pages in the virtual memory
-int  ID_number; // machine ID
-int PhyPageInfo[NumPhysPages]; //record physical page info (ID)
-/*-----------------------Homework for Memory Management------------------------*/
+
 
 TranslationEntry *main_tab[NumPhysPages]; // pagetable
 
@@ -142,6 +137,12 @@ class Machine
     TranslationEntry *pageTable;
     unsigned int pageTableSize;
     bool ReadMem(int addr, int size, int* value);
+	/*-----------------------Homework for Memory Management------------------------*/
+	bool UsedPhyPage[NumPhysPages]; //record the pages in the main memory
+	bool UsedVirtualPage[NumPhysPages]; //record the pages in the virtual memory
+	int ID_number; // machine ID
+	int PhyPageInfo[NumPhysPages]; //record physical page info (ID)
+	/*-----------------------Homework for Memory Management------------------------*/
   private:
 
 	// Routines internal to the machine simulation -- DO NOT call these directly
