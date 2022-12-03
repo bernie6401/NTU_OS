@@ -24,11 +24,10 @@
 
 
 class SynchDisk;
-class UserProgKernel : public ThreadedKernel
-{
+class UserProgKernel : public ThreadedKernel {
   public:
     UserProgKernel(int argc, char **argv);
-    // Interpret command line arguments
+				// Interpret command line arguments
     ~UserProgKernel();		// deallocate the kernel
 
     void Initialize();		// initialize the kernel
@@ -41,29 +40,19 @@ class UserProgKernel : public ThreadedKernel
 
     void SelfTest();		// test whether kernel is working
 
-    /*-----------------------Homework for Memory Management------------------------*/
-    // Create a new SynchDisk called SwapDisk to simulate the secondary storage
-    SynchDisk *SwapDisk;     // SwapDisk saves pages if main memory is not enough
-    bool debugUserProg;		// single step user program
-    /*-----------------------Homework for Memory Management------------------------*/
-
-
-    // These are public for notational convenience.
+// These are public for notational convenience.
     Machine *machine;
     FileSystem *fileSystem;
 
-  #ifdef FILESYS
+#ifdef FILESYS
     SynchDisk *synchDisk;
-  #endif // FILESYS
+#endif // FILESYS
 
   private:
-  /*-----------------------Homework for Memory Management------------------------*/
-    // No longer needed for HW3
-    //bool debugUserProg;		// single step user program
-  /*-----------------------Homework for Memory Management------------------------*/
-  Thread* t[10];
-  char*	execfile[10];
-  int	execfileNum;
+    bool debugUserProg;		// single step user program
+	Thread* t[10];
+	char*	execfile[10];
+	int	execfileNum;
 };
 
 #endif //USERKERNEL_H
