@@ -118,6 +118,10 @@ bool AddrSpace::Load(char *fileName)
     NoffHeader noffH;
     unsigned int size;
 
+    /*-----------------------Homework for Memory Management------------------------*/
+    unsigned int tmp;
+    /*-----------------------Homework for Memory Management------------------------*/
+
     if (executable == NULL)
     {
         cerr << "Unable to open file " << fileName << "\n";
