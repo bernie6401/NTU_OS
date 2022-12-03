@@ -82,7 +82,7 @@ void Alarm::CallBack()
         /*-----------------------Homework for CPU Scheduling------------------------*/
         if(kernel->scheduler->getSchedulerType() == RR || kernel->scheduler->getSchedulerType() == Priority )
         {
-            // cout << "=== interrupt->YieldOnReturn ===" << endl;
+            cout << "=== interrupt->YieldOnReturn ===" << endl;
             interrupt->YieldOnReturn();
         }
         /*-----------------------Homework for CPU Scheduling------------------------*/
