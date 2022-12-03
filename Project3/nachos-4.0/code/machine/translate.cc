@@ -50,8 +50,7 @@ unsigned int WordToHost(unsigned int word)
 	#endif /* HOST_IS_BIG_ENDIAN */
 }
 
-unsigned short
-ShortToHost(unsigned short shortword)
+unsigned short ShortToHost(unsigned short shortword)
 {
 	#ifdef HOST_IS_BIG_ENDIAN
 		register unsigned short result;
@@ -185,6 +184,11 @@ ExceptionType Machine::Translate(int virtAddr, int* physAddr, int size, bool wri
     unsigned int vpn, offset;
     TranslationEntry *entry;
     unsigned int pageFrame;
+
+	/*-----------------------Homework for Memory Management------------------------*/
+	int victim;///find the page victim
+    unsigned int j;
+	/*-----------------------Homework for Memory Management------------------------*/
 
     DEBUG(dbgAddr, "\tTranslate " << virtAddr << (writing ? " , write" : " , read"));
 

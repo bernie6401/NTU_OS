@@ -70,6 +70,9 @@ void UserProgKernel::Initialize(SchedulerType type)//
     ThreadedKernel::Initialize(type);	// init multithreading
     machine = new Machine(debugUserProg);
     fileSystem = new FileSystem();
+	/*-----------------------Homework for Memory Management------------------------*/
+	SwapDisk = new SynchDisk("New SwapDisk");// Swap disk for virtual memory
+	/*-----------------------Homework for Memory Management------------------------*/
 	#ifdef FILESYS
 		synchDisk = new SynchDisk("New SynchDisk");
 	#endif // FILESYS

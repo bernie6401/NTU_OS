@@ -59,6 +59,10 @@ int AddrSpace::NumFreePages = NumPhysPages;
 
 AddrSpace::AddrSpace()
 {
+    /*-----------------------Homework for Memory Management------------------------*/
+    ID=(kernel->machine->ID_number)++;
+    kernel->machine->ID_number=(kernel->machine->ID_number)++;
+    /*-----------------------Homework for Memory Management------------------------*/
     // SBK: NumPhysPages is defined at machine.h -> int 32
     /* SBK: This is unnecessary mapping
     pageTable = new TranslationEntry[NumPhysPages]; // SBK: Construct a pageTable that size = real memory
@@ -86,11 +90,14 @@ AddrSpace::AddrSpace()
 AddrSpace::~AddrSpace()
 {
     // Free the physical page that this program used
-    for(int i = 0; i < numPages; i++)
-    {
-        AddrSpace::PhyPageStatus[pageTable[i].physicalPage] = PAGE_FREE;
-        AddrSpace::NumFreePages++;
-    }
+    /*-----------------------Homework for Memory Management------------------------*/
+    // No longer needed for HW3
+    // for(int i = 0; i < numPages; i++)
+    // {
+    //     AddrSpace::PhyPageStatus[pageTable[i].physicalPage] = PAGE_FREE;
+    //     AddrSpace::NumFreePages++;
+    // }
+    /*-----------------------Homework for Memory Management------------------------*/
     delete pageTable;
 }
 
@@ -139,7 +146,9 @@ bool AddrSpace::Load(char *fileName)
     /*-----------------------Homework for Memory Management------------------------*/
     // Allocate
     pageTable = new TranslationEntry[numPages];
-    for(unsigned int i = 0, idx = 0; i < numPages; i++)
+    /*-----------------------Homework for Memory Management------------------------*/
+    // No longer needed for HW3
+    /*for(unsigned int i = 0, idx = 0; i < numPages; i++)
     {
         pageTable[i].virtualPage = i;
         while(idx < NumPhysPages && AddrSpace::PhyPageStatus[idx] == PAGE_OCCU) idx++;
@@ -152,7 +161,8 @@ bool AddrSpace::Load(char *fileName)
         pageTable[i].use = false;
         pageTable[i].dirty = false;
         pageTable[i].readOnly = false;
-    }
+    }*/
+    /*-----------------------Homework for Memory Management------------------------*/
 
     DEBUG(dbgAddr, "Initializing address space: " << numPages << ", " << size);
 
@@ -186,7 +196,7 @@ bool AddrSpace::Load(char *fileName)
                 pageTable[i].readOnly = FALSE;
                 pageTable[i].ID =ID;
                 pageTable[i].LRU_counter++; // LRU counter when save in memory
-                executable->ReadAt(&(kernel->machine->mainMemory[j*PageSize]),PageSize, noffH.code.inFileAddr+(i*PageSize));  
+                executable->ReadAt(&(kernel->machine->mainMemory[j*PageSize]),PageSize, noffH.code.inFileAddr+(i*PageSize));
             }
             // main memory is not enough, use virtual memory
             else
@@ -210,10 +220,13 @@ bool AddrSpace::Load(char *fileName)
     }
 	if (noffH.initData.size > 0)
     {
-        DEBUG(dbgAddr, "Initializing data segment.");
-	    DEBUG(dbgAddr, noffH.initData.virtualAddr << ", " << noffH.initData.size);
-        executable->ReadAt(&(kernel->machine->mainMemory[pageTable[noffH.initData.virtualAddr/PageSize].physicalPage * PageSize + (noffH.code.virtualAddr%PageSize)]), noffH.initData.size, noffH.initData.inFileAddr);
-        // executable->ReadAt(&(kernel->machine->mainMemory[noffH.initData.virtualAddr]),noffH.initData.size, noffH.initData.inFileAddr);
+        // For HW1, it's needed, but not in HW3
+        // DEBUG(dbgAddr, "Initializing data segment.");
+	    // DEBUG(dbgAddr, noffH.initData.virtualAddr << ", " << noffH.initData.size);
+        // executable->ReadAt(&(kernel->machine->mainMemory[pageTable[noffH.initData.virtualAddr/PageSize].physicalPage * PageSize + (noffH.code.virtualAddr%PageSize)]), noffH.initData.size, noffH.initData.inFileAddr);
+        
+        // For HW3, it's needed, but not in HW1
+        executable->ReadAt(&(kernel->machine->mainMemory[noffH.initData.virtualAddr]),noffH.initData.size, noffH.initData.inFileAddr);
     }
 
     delete executable;      // close file
@@ -231,6 +244,9 @@ bool AddrSpace::Load(char *fileName)
 void 
 AddrSpace::Execute(char *fileName) 
 {
+    /*-----------------------Homework for Memory Management------------------------*/
+    pageTable_is_load=FALSE;
+    /*-----------------------Homework for Memory Management------------------------*/
     if (!Load(fileName))
     {
         cout << "inside !Load(FileName)" << endl;
@@ -240,6 +256,10 @@ AddrSpace::Execute(char *fileName)
     //kernel->currentThread->space = this;
     this->InitRegisters();		// set the initial register values
     this->RestoreState();		// load page table register
+
+    /*-----------------------Homework for Memory Management------------------------*/
+    pageTable_is_load=TRUE;
+    /*-----------------------Homework for Memory Management------------------------*/
 
     kernel->machine->Run();		// jump to the user progam
 

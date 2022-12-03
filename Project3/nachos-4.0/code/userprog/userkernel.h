@@ -44,6 +44,7 @@ class UserProgKernel : public ThreadedKernel
     /*-----------------------Homework for Memory Management------------------------*/
     // Create a new SynchDisk called SwapDisk to simulate the secondary storage
     SynchDisk *SwapDisk;     // SwapDisk saves pages if main memory is not enough
+    bool debugUserProg;		// single step user program
     /*-----------------------Homework for Memory Management------------------------*/
 
 
@@ -56,7 +57,10 @@ class UserProgKernel : public ThreadedKernel
   #endif // FILESYS
 
   private:
-    bool debugUserProg;		// single step user program
+  /*-----------------------Homework for Memory Management------------------------*/
+    // No longer needed for HW3
+    //bool debugUserProg;		// single step user program
+  /*-----------------------Homework for Memory Management------------------------*/
   Thread* t[10];
   char*	execfile[10];
   int	execfileNum;
