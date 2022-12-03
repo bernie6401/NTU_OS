@@ -34,10 +34,6 @@ const unsigned int NumPhysPages = 256;	//-----------------------Homework--------
 const int MemorySize = (NumPhysPages * PageSize);
 const int TLBSize = 4;			// if there is a TLB, make it small
 
-
-
-TranslationEntry *main_tab[NumPhysPages]; // pagetable
-
 enum ExceptionType { NoException,           // Everything ok!
 		     SyscallException,      // A program executed a system call.
 		     PageFaultException,    // No valid translation found
@@ -142,6 +138,7 @@ class Machine
 	bool UsedVirtualPage[NumPhysPages]; //record the pages in the virtual memory
 	int ID_number; // machine ID
 	int PhyPageInfo[NumPhysPages]; //record physical page info (ID)
+	TranslationEntry *main_tab[NumPhysPages]; // pagetable
 	/*-----------------------Homework for Memory Management------------------------*/
   private:
 
