@@ -54,13 +54,25 @@ UserProgKernel::UserProgKernel(int argc, char **argv): ThreadedKernel(argc, argv
 /*-----------------------Homework for CPU Scheduling------------------------*/
 void UserProgKernel::Initialize()
 {
-	Initialize(RR);
+	/*-----------------------Homework for Memory Management------------------------*/
+	ThreadedKernel::Initialize(RR);
+	// Initialized SwapDisk
+	machine = new Machine(debugUserProg);
+    fileSystem = new FileSystem();
+    SwapDisk = new SynchDisk("New SwapDisk");// Swap disk for virtual memory
+	#ifdef FILESYS
+		synchDisk = new SynchDisk("New SynchDisk");
+	#endif // FILESYS
+	/*-----------------------Homework for Memory Management------------------------*/
 }
 void UserProgKernel::Initialize(SchedulerType type)//
 {
     ThreadedKernel::Initialize(type);	// init multithreading
     machine = new Machine(debugUserProg);
     fileSystem = new FileSystem();
+	/*-----------------------Homework for Memory Management------------------------*/
+	SwapDisk = new SynchDisk("New SwapDisk");// Swap disk for virtual memory
+	/*-----------------------Homework for Memory Management------------------------*/
 	#ifdef FILESYS
 		synchDisk = new SynchDisk("New SynchDisk");
 	#endif // FILESYS
@@ -85,14 +97,12 @@ UserProgKernel::~UserProgKernel()
 // UserProgKernel::Run
 // 	Run the Nachos kernel.  For now, just run the "halt" program. 
 //----------------------------------------------------------------------
-void
-ForkExecute(Thread *t)
+void ForkExecute(Thread *t)
 {
 	t->space->Execute(t->getName());
 }
 
-void
-UserProgKernel::Run()
+void UserProgKernel::Run()
 {
 
 	cout << "Total threads number is " << execfileNum << endl;

@@ -27,7 +27,8 @@
 // In addition, there are some extra bits for access control (valid and 
 // read-only) and some bits for usage information (use and dirty).
 
-class TranslationEntry {
+class TranslationEntry
+{
   public:
     unsigned int virtualPage;  	// The page number in virtual memory.
     unsigned int physicalPage;  // The page number in real memory (relative to the
@@ -40,6 +41,12 @@ class TranslationEntry {
 			// page is referenced or modified.
     bool dirty;         // This bit is set by the hardware every time the
 			// page is modified.
+
+
+    /*-----------------------Homework for Memory Management------------------------*/
+    int LRU_counter;    // counter for LRU
+    int ID;             // page table ID
+    /*-----------------------Homework for Memory Management------------------------*/
 };
 
 #endif
