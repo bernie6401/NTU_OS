@@ -22,21 +22,6 @@ main()
 
     /* then sort! */
     for (i = 0; i < 1023; i++)
-<<<<<<< HEAD
-    {
-        for (j = 0; j < (1023 - i); j++)
-	{
-            if (A[j] > A[j + 1])
-	    {  /* out of order -> need to swap ! */
-                tmp = A[j];
-                A[j] = A[j + 1];
-                A[j + 1] = tmp;
-            }
-        }
-    }
-
-    Exit(A[0]);     /* and then we're done -- should be 1! */
-=======
         for (j = i; j < (1023 - i); j++)
 	   if (A[j] > A[j + 1]) {	/* out of order -> need to swap ! */
 	      tmp = A[j];
@@ -44,5 +29,4 @@ main()
 	      A[j + 1] = tmp;
     	   }
     Exit(A[0]);		/* and then we're done -- should be 0! */
->>>>>>> 980a893fc0672db0dbdca56bdec549df9df66743
 }
