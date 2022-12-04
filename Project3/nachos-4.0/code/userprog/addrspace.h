@@ -19,8 +19,7 @@
 
 #define UserStackSize		1024 	// increase this as necessary!
 
-class AddrSpace
-{
+class AddrSpace {
   public:
     AddrSpace();			// Create an address space.
     ~AddrSpace();			// De-allocate an address space
@@ -30,10 +29,6 @@ class AddrSpace
 
     void SaveState();			// Save/restore address space-specific
     void RestoreState();		// info on a context switch 
-
-    /*-----------------------Homework for Memory Management------------------------*/
-    int ID;
-    /*-----------------------Homework for Memory Management------------------------*/
 
   private:
     TranslationEntry *pageTable;	// Assume linear page table translation
@@ -52,10 +47,6 @@ class AddrSpace
     // SBK: and how many free physical page can use
     static bool PhyPageStatus[NumPhysPages];
     static int NumFreePages;
-
-    /*-----------------------Homework for Memory Management------------------------*/
-    bool pageTable_is_load;
-    /*-----------------------Homework for Memory Management------------------------*/
 };
 
 #endif // ADDRSPACE_H
