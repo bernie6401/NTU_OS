@@ -46,7 +46,7 @@ SwapHeader (NoffHeader *noffH)
 // SBK
 #define PAGE_OCCU true
 #define PAGE_FREE false
-bool AddrSpace::PhyPageStatus[NumPhysPages] = {PAGE_FREE};
+// bool AddrSpace::PhyPageStatus[NumPhysPages] = {PAGE_FREE};
 int AddrSpace::NumFreePages = NumPhysPages;
 
 //----------------------------------------------------------------------
