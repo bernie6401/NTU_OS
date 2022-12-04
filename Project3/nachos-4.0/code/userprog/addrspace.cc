@@ -28,8 +28,7 @@
 //	endian machine, and we're now running on a big endian machine.
 //----------------------------------------------------------------------
 
-static void 
-SwapHeader (NoffHeader *noffH)
+static void SwapHeader (NoffHeader *noffH)
 {
     noffH->noffMagic = WordToHost(noffH->noffMagic);
     noffH->code.size = WordToHost(noffH->code.size);
@@ -46,8 +45,11 @@ SwapHeader (NoffHeader *noffH)
 // SBK
 #define PAGE_OCCU true
 #define PAGE_FREE false
+/*-----------------------Homework for Memory Management------------------------*/
+// There's no longer needed in HW3
 // bool AddrSpace::PhyPageStatus[NumPhysPages] = {PAGE_FREE};
-int AddrSpace::NumFreePages = NumPhysPages;
+// int AddrSpace::NumFreePages = NumPhysPages;
+/*-----------------------Homework for Memory Management------------------------*/
 
 //----------------------------------------------------------------------
 // AddrSpace::AddrSpace
@@ -230,7 +232,7 @@ bool AddrSpace::Load(char *fileName)
         // executable->ReadAt(&(kernel->machine->mainMemory[pageTable[noffH.initData.virtualAddr/PageSize].physicalPage * PageSize + (noffH.code.virtualAddr%PageSize)]), noffH.initData.size, noffH.initData.inFileAddr);
         
         // For HW3, it's needed, but not in HW1
-        executable->ReadAt(&(kernel->machine->mainMemory[noffH.initData.virtualAddr]),noffH.initData.size, noffH.initData.inFileAddr);
+        executable->ReadAt(&(kernel->machine->mainMemory[noffH.initData.virtualAddr]), noffH.initData.size, noffH.initData.inFileAddr);
     }
 
     delete executable;      // close file
@@ -316,8 +318,13 @@ AddrSpace::InitRegisters()
 
 void AddrSpace::SaveState() 
 {
-    pageTable=kernel->machine->pageTable;
-    numPages=kernel->machine->pageTableSize;
+    /*-----------------------Homework for Memory Management------------------------*/
+    if(pageTable_is_load)
+    {
+        pageTable=kernel->machine->pageTable;
+        numPages=kernel->machine->pageTableSize;
+    }
+    /*-----------------------Homework for Memory Management------------------------*/
 }
 
 //----------------------------------------------------------------------
