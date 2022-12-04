@@ -247,7 +247,7 @@ ExceptionType Machine::Translate(int virtAddr, int* physAddr, int size, bool wri
 				buffer1 = new char[PageSize];
 				buffer2 = new char[PageSize];
 				//Random
-				victim = (rand()%32);
+				// victim = (rand()%32);
 
 				//LRU
 				int min = pageTable[0].LRU_counter;
