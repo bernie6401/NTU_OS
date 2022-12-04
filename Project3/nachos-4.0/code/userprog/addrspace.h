@@ -50,7 +50,7 @@ class AddrSpace
     // SBK: static means these variable share to this class
     // SBK: to store usage of all physical page
     // SBK: and how many free physical page can use
-    static bool PhyPageStatus[NumPhysPages];
+    // static bool PhyPageStatus[NumPhysPages];
     static int NumFreePages;
 
     /*-----------------------Homework for Memory Management------------------------*/

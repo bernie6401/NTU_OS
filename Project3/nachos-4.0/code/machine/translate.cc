@@ -294,11 +294,11 @@ ExceptionType Machine::Translate(int virtAddr, int* physAddr, int size, bool wri
 				break;
 			}
 		if (entry == NULL)
-		{				// not found
+		{		// not found
 				DEBUG(dbgAddr, "Invalid TLB entry for this virtual page!");
 				return PageFaultException;		// really, this is a TLB fault,
-							// the page may be in memory,
-							// but not in the TLB
+				// the page may be in memory,
+				// but not in the TLB
 		}
     }
 
